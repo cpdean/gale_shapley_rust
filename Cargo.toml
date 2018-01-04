@@ -1,0 +1,6 @@
+[package]
+name = "how_do_i_pair"
+version = "0.1.0"
+authors = ["Conrad Dean <conrad.p.dean@gmail.com>"]
+
+[dependencies]
