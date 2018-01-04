@@ -13,11 +13,16 @@ mod optimal_pairing {
 
     pub fn best_pairings(
         students: Vec<Student>,
-        hospitals: Vec<Hospital>,
+        mut hospitals: Vec<Hospital>,
     ) -> Vec<(Student, Option<Hospital>)> {
         let mut o = Vec::new();
         for s in students {
-            o.push((s, None));
+            if let Some(any_hospital) = hospitals.pop() {
+                o.push((s, Some(any_hospital)));
+            }
+            else {
+                o.push((s, None));
+            }
         }
         o
     }
@@ -55,15 +60,15 @@ mod tests {
             Student { id: 3, location: 3 },
         ];
         let hospitals = vec![
-            Hospital { id: 1, location: 1 },
-            Hospital { id: 2, location: 2 },
             Hospital { id: 3, location: 3 },
+            Hospital { id: 2, location: 2 },
+            Hospital { id: 1, location: 1 },
         ];
         let pairings = best_pairings(students, hospitals);
         let expected_outcome = vec![
             (Student { id: 1, location: 1 }, Some(Hospital { id: 1, location: 1 })),
-            (Student { id: 2, location: 1 }, Some(Hospital { id: 2, location: 1 })),
-            (Student { id: 3, location: 1 }, Some(Hospital { id: 3, location: 1 })),
+            (Student { id: 2, location: 2 }, Some(Hospital { id: 2, location: 2 })),
+            (Student { id: 3, location: 3 }, Some(Hospital { id: 3, location: 3 })),
         ];
         assert_eq!(expected_outcome, pairings);
     }
