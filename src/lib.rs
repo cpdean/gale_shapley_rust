@@ -30,7 +30,7 @@ mod tests {
 
     #[test]
     fn twenty_eight_days_later() {
-        // your undergrad degree is worthless to zombies
+        // your degree is worthless to zombies
         let students = vec![
             Student { id: 1, location: 1 },
             Student { id: 2, location: 2 },
