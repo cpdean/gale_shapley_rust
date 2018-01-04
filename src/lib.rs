@@ -27,11 +27,22 @@ mod optimal_pairing {
         o
     }
 
+    pub fn score(pairings: Vec<(Student, Option<Hospital>)>) -> i32 {
+        let mut total = 0;
+        for (s, h) in pairings {
+            if let Some(hospital) = h {
+                let diff = s.location - hospital.location;
+                total += diff.abs();
+            }
+        }
+        total
+    }
+
 }
 
 #[cfg(test)]
 mod tests {
-    use optimal_pairing::{best_pairings, Hospital, Student};
+    use optimal_pairing::{score, best_pairings, Hospital, Student};
 
     #[test]
     fn twenty_eight_days_later() {
@@ -73,9 +84,65 @@ mod tests {
         assert_eq!(expected_outcome, pairings);
     }
 
+    #[test]
+    fn perfect_pairs_scored() {
+        let students = vec![
+            Student { id: 1, location: 1 },
+            Student { id: 2, location: 2 },
+            Student { id: 3, location: 3 },
+        ];
+        let hospitals = vec![
+            Hospital { id: 3, location: 3 },
+            Hospital { id: 2, location: 2 },
+            Hospital { id: 1, location: 1 },
+        ];
+        let pairing_score = score(best_pairings(students, hospitals));
+        assert_eq!(0, pairing_score);
+    }
 
     #[test]
-    fn one_perfect_pair() {
+    fn slight_imperfect_pairs_scored() {
+        let students = vec![
+            Student { id: 1, location: 1 },
+            Student { id: 2, location: 20 },
+            Student { id: 3, location: 30 },
+        ];
+        let hospitals = vec![
+            Hospital { id: 3, location: 31},
+            Hospital { id: 2, location: 21 },
+            Hospital { id: 1, location: 2 },
+        ];
+        let pairing_score = score(best_pairings(students, hospitals));
+        assert_eq!(3, pairing_score);
+    }
+
+
+    #[test]
+    fn parents_basement_reversed() {
+        // the naiive impl of pairing things was order-dependent. order shouldn't really matter if
+        // there's an objective, optimal pairing
+        let students = vec![
+            Student { id: 1, location: 1 },
+            Student { id: 2, location: 2 },
+            Student { id: 3, location: 3 },
+        ];
+        let hospitals = vec![
+            Hospital { id: 1, location: 1 },
+            Hospital { id: 2, location: 2 },
+            Hospital { id: 3, location: 3 },
+        ];
+        let pairings = best_pairings(students, hospitals);
+        let expected_outcome = vec![
+            (Student { id: 1, location: 1 }, Some(Hospital { id: 1, location: 1 })),
+            (Student { id: 2, location: 2 }, Some(Hospital { id: 2, location: 2 })),
+            (Student { id: 3, location: 3 }, Some(Hospital { id: 3, location: 3 })),
+        ];
+        assert_eq!(expected_outcome, pairings);
+    }
+
+    #[test]
+    fn too_many_students() {
+        // unemployment :(
         let students = vec![
             Student { id: 1, location: 1 },
             Student {
